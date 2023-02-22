@@ -105,7 +105,7 @@ export default {
         const response = await request.json();
         if (response.status) {
           this.columns = this.columns.filter((item, index) => {return index !== iindex})
-          this.count = this.columns?.slice(-1)?.[0]?.[0]
+          this.count = this.columns?.slice(-1)?.[0]?.[0] || this.count
         }
       }
     },
