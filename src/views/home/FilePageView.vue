@@ -61,10 +61,10 @@ export default {
     async postData() {
       const getJsonData = this.parseDataFromInput();
       const params = new URLSearchParams(getJsonData).toString();
-      window.location.href = `http://eldorqazwe.online/fill_template?${params}`;
+      window.location.href = `/api/fill_template?${params}`;
     },
     async deleteDocument(id) {
-      const request = await fetch(`http://eldorqazwe.online/delete_template?id=${id}`);
+      const request = await fetch(`/api/delete_template?id=${id}`);
       if (request.ok) {
         const response = await request.json();
         console.log(response);
@@ -81,7 +81,7 @@ export default {
   },
   async mounted() {
     const request = await fetch(
-      `http://eldorqazwe.online/get_template_info?id=${this.$route.params.id}`
+      `/api/get_template_info?id=${this.$route.params.id}`
     );
     if (request.ok) {
       const response = await request.json();

@@ -80,7 +80,7 @@ export default {
     async deleteDocument (table) {
       const query = `db_name=${this.$route.params.id}&table_name=${table}`
       const request = await fetch(
-          `http://eldorqazwe.online/delete_table?${query}`
+          `/api/delete_table?${query}`
       );
       if (request.ok) {
         const response = await request.json();
@@ -100,7 +100,7 @@ export default {
 
       const query = `columns=${columns}&db_name=${this.$route.params.id}&table_name=${this.table_name}`
       const request = await fetch(
-          `http://eldorqazwe.online/create_table?${query}`
+          `/api/create_table?${query}`
       );
       if (request.ok) {
         const response = await request.json();
@@ -129,7 +129,7 @@ export default {
   },
   async mounted() {
     const request = await fetch(
-        `http://eldorqazwe.online/get_tables?db_name=${this.$route.params.id}`
+        `/api/get_tables?db_name=${this.$route.params.id}`
     );
     if (request.ok) {
       const response = await request.json();

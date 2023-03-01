@@ -52,6 +52,7 @@
       </span>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -80,7 +81,7 @@ export default {
     },
     async getRows () {
       const query = `db_name=${this.database_name}&table_name=${this.table_name}`
-      const request = await fetch(`http://eldorqazwe.online/get_rows_from_table?${query}`);
+      const request = await fetch(`/api/get_rows_from_table?${query}`);
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
@@ -92,7 +93,7 @@ export default {
     },
     async getColumns () {
       const query = `db_name=${this.database_name}&table_name=${this.table_name}`
-      const request = await fetch(`http://eldorqazwe.online/get_info_columns_of_table?${query}`);
+      const request = await fetch(`/api/get_info_columns_of_table?${query}`);
       if (request.ok) {
         const response = await request.json();
         if (response.status) this.rows = response.data;
@@ -100,7 +101,7 @@ export default {
     },
     async deleteColumn (id, iindex) {
       const query = `db_name=${this.database_name}&table_name=${this.table_name}&id=${id}`
-      const request = await fetch(`http://eldorqazwe.online/delete_row_from_table?${query}`);
+      const request = await fetch(`/api/delete_row_from_table?${query}`);
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
@@ -125,7 +126,7 @@ export default {
 
       const data = JSON.stringify(this.values)
       const query = `data=${data}&table_name=${this.table_name}&db_name=${this.database_name}`
-      const request = await fetch(`http://eldorqazwe.online/add_row_to_table?${query}`);
+      const request = await fetch(`/api/add_row_to_table?${query}`);
       if (request.ok) {
         const response = await request.json();
         if (response.status) {

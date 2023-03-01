@@ -86,7 +86,7 @@ export default {
       formData.append("name", this.fileName);
       formData.append("desc", this.description);
       this.loading = true;
-      const request = await fetch(`http://eldorqazwe.online/upload_template`, {
+      const request = await fetch(`/api/upload_template`, {
         method: "POST",
         body: formData,
       });

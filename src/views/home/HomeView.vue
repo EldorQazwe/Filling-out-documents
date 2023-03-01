@@ -51,7 +51,7 @@ export default {
       document.getElementById("input").click();
     },
     async deleteDocument(id) {
-      const request = await fetch(`http://eldorqazwe.online/delete_template?id=${id}`);
+      const request = await fetch(`/api/delete_template?id=${id}`);
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
@@ -62,7 +62,7 @@ export default {
     },
   },
   async mounted() {
-    const request = await fetch("http://eldorqazwe.online/get_template_list");
+    const request = await fetch("/api/get_template_list");
     if (request.ok) {
       const response = await request.json();
       if (response.status) this.files = response.data;

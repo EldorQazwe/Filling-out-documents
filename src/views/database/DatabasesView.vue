@@ -56,7 +56,7 @@ export default {
   methods: {
     async createDatabase (event) {
       event.preventDefault();
-      const request = await fetch(`http://eldorqazwe.online/create_database?name=${this.db_name}`);
+      const request = await fetch(`/api/create_database?name=${this.db_name}`);
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
@@ -69,7 +69,7 @@ export default {
 
     },
     async deleteDocument(id) {
-      const request = await fetch(`http://eldorqazwe.online/delete_database?db_name=${id}`);
+      const request = await fetch(`/api/delete_database?db_name=${id}`);
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
@@ -80,7 +80,7 @@ export default {
     },
   },
   async mounted() {
-    const request = await fetch("http://eldorqazwe.online/get_databases");
+    const request = await fetch("/api/get_databases");
     if (request.ok) {
       const response = await request.json();
       if (response.status) this.databases = response.data;
