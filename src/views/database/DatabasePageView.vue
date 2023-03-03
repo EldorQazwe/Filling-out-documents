@@ -1,8 +1,5 @@
 <template>
-  <link
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-      rel="stylesheet"
-  />
+
   <div class="flex-container">
     <form v-on:submit="createTable">
       <div class="container-header">
@@ -85,7 +82,7 @@ export default {
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
-          this.tables = this.tables.filter((i) => {return i != table}) // TODO: EDIT
+          this.tables = this.tables.filter((i) => {return i !== table})
           this.toast.success("Вы успешно удалили таблицу")
         }
       }
@@ -125,16 +122,19 @@ export default {
     },
     updateItem(index) {
       this.items[index].title = this.$refs.tables[index].value;
+    },
+    async getTablesByDatabases () {
+      const request = await fetch(
+          `/api/get_tables?db_name=${this.$route.params.id}`
+      );
+      if (request.ok) {
+        const response = await request.json();
+        if (response.status) this.tables = response.data;
+      }
     }
   },
   async mounted() {
-    const request = await fetch(
-        `/api/get_tables?db_name=${this.$route.params.id}`
-    );
-    if (request.ok) {
-      const response = await request.json();
-      if (response.status) this.tables = response.data;
-    }
+    await this.getTablesByDatabases()
   },
 };
 </script>

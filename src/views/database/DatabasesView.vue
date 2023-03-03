@@ -1,8 +1,5 @@
 <template>
-  <link
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-      rel="stylesheet"
-  />
+
   <div class="flex-container">
     <form v-on:submit="createDatabase">
       <div class="container-header">
@@ -73,18 +70,21 @@ export default {
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
-          this.databases = this.databases.filter((file) => file != id);
+          this.databases = this.databases.filter((file) => file !== id);
           this.toast.info(`БД №${id} удалён`);
         }
       }
     },
+    async getAllDatabases () {
+      const request = await fetch("/api/get_databases");
+      if (request.ok) {
+        const response = await request.json();
+        if (response.status) this.databases = response.data;
+      }
+    }
   },
   async mounted() {
-    const request = await fetch("/api/get_databases");
-    if (request.ok) {
-      const response = await request.json();
-      if (response.status) this.databases = response.data;
-    }
+    await this.getAllDatabases()
   },
 };
 </script>

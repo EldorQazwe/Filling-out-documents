@@ -1,4 +1,8 @@
 <template>
+  <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+      rel="stylesheet"
+  />
   <nav>
     <router-link to="/">Home</router-link>
     <router-link to="/databases">База данных</router-link>
@@ -18,8 +22,8 @@
 nav {
   padding: 30px;
   text-align: left;
-  box-shadow: 0px 1px 1px 0 rgba(0,0,0,0.2);
-  margin: 30px 0px
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.2);
+  margin: 30px 0
 }
 
 nav a {
@@ -32,11 +36,7 @@ nav a.router-link-exact-active {
   color: #42b983;
 }
 
-.card__wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  position: relative;
-}
+
 
 .btn-delete {
   position: absolute;
