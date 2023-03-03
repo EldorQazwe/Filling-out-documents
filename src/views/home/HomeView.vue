@@ -6,13 +6,13 @@
       Загрузить?
     </p>
   </div>
-  <div class="flex wrap card__wrapper">
+  <div class="card__wrapper">
     <div class="card" v-for="file in files" :key="file.id">
       <button @click="deleteDocument(file.id)" class="btn-delete">
         <span class="glyphicon glyphicon-floppy-remove" style="font-size: 18px"></span>
       </button>
       <RouterLink :to="{ name: 'file', params: { id: file.id } }">
-        <div><img src="@/assets/docx.png" class="avatar" /></div>
+        <div><img src="@/assets/docx.png" class="avatar" alt="avatar"/></div>
         <div class="test">
           <h4 class="card__name">{{ file.info.name }}</h4>
           <p>{{ file.info.desc }}</p>
@@ -55,7 +55,7 @@ export default {
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
-          this.files = this.files.filter((file) => file.id != id);
+          this.files = this.files.filter((file) => file.id !== id);
           this.toast.info(`Документ №${id} удалён`);
         }
       }
@@ -72,5 +72,9 @@ export default {
 </script>
 
 <style scoped>
-
+.card__wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
 </style>
