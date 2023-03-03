@@ -4,17 +4,30 @@
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
       rel="stylesheet"
   />
+  <select class="form-select form-control" id="sel1" name="cellist1" v-model="selected">
+    <option selected disabled value="">Выберите документ</option>
+    <option
+        v-for="template in templates"
+        :key="template.id"
+        :value="template.id"
+    >
+      {{template.info.name}}
+    </option>
+  </select>
+  <hr>
   <div class="flex-container container-header">
-        <input
-            v-for="row in rows" :key="row"
-            class=" col-2 form-control"
-            :value="row[1]"
-            disabled
-        />
-    <span
-        class="input-group-addon col-1">
-      <i class="glyphicon glyphicon-floppy-remove"></i>
-    </span>
+    <input
+        v-for="row in rows" :key="row"
+        class=" col-2 form-control"
+        :value="row[1]"
+        disabled
+    />
+    <div class="row-1 col-1 container-header" >
+      <span
+          class="input-group-addon col-1">
+        <i class="glyphicon glyphicon-floppy-remove"></i>
+      </span>
+    </div>
   </div>
   <hr>
   <div class="flex-container container-header">
@@ -31,11 +44,13 @@
         placeholder="Enter field value"
         ref='data'
     />
-    <span
-        @click="addColumn"
-        class="input-group-addon col-1">
-      <i class="glyphicon glyphicon-ok"></i>
-    </span>
+    <div class="row-1 col-1 container-header" >
+      <span
+          @click="addColumn"
+          class="input-group-addon col-1">
+        <i class="glyphicon glyphicon-ok"></i>
+      </span>
+    </div>
   </div>
   <hr>
   <div class="flex-container column-1">
@@ -46,13 +61,20 @@
           class='title form-control col-2'
           disabled
       />
-      <span
-          @click="deleteColumn(column[0], index)"
-          class="input-group-addon col-1"><i class="glyphicon glyphicon-remove"></i>
-      </span>
+
+      <div class="row-1 col-1 container-header" >
+        <span
+            @click="deleteColumn(column[0], index)"
+            class="input-group-addon col-2 actions"><i class="glyphicon glyphicon-remove"></i>
+        </span>
+      </div>
     </div>
   </div>
-
+  <span
+      style="width: inherit"
+      @click="downloadAllZip"
+      class="input-group-addon"><i class="glyphicon glyphicon-circle-arrow-down"></i>
+  </span>
 </template>
 
 <script>
@@ -66,7 +88,9 @@ export default {
       values: {},
       database_name: this.$route.params.database,
       table_name: this.$route.params.table,
-      count: 0
+      count: 0,
+      templates: [],
+      selected: ''
     };
   },
   setup() {
@@ -136,16 +160,54 @@ export default {
           this.count ++
         }
       }
-    }
+    },
+    async getTemplatesList() {
+      const request = await fetch("/api/get_template_list");
+      if (request.ok) {
+        const response = await request.json();
+        if (response.status) this.templates = response.data;
+      }
+    },
+    async downloadAllZip() {
+      const id = this.selected || null;
+      const database = this.database_name || null;
+      const table = this.table_name || null;
+
+      if (!id) {
+        this.toast.error('Missing or invalid template id');
+        return;
+      }
+
+      if (!database) {
+        this.toast.error('Missing database name');
+        return;
+      }
+
+      if (!table) {
+        this.toast.error('Missing table name');
+        return;
+      }
+      const queryParams = new URLSearchParams({ id, database, table });
+      window.location.href = `/api/multi_fill_template?${queryParams.toString()}`
+    },
   },
   async mounted() {
     await this.getRows()
     await this.getColumns()
+    await this.getTemplatesList()
   },
 };
 </script>
 
 <style scoped>
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.actions {
+  margin-right: 6px;
+}
 
 .flex-container {
   display: flex;
