@@ -1,81 +1,110 @@
 <template>
-
   <link
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
       rel="stylesheet"
   />
-  <select class="form-select form-control" id="sel1" name="cellist1" v-model="selected">
-    <option selected disabled value="">Выберите документ</option>
-    <option
-        v-for="template in templates"
-        :key="template.id"
-        :value="template.id"
-    >
-      {{template.info.name}}
-    </option>
-  </select>
-  <hr>
-  <div class="flex-container container-header">
-    <input
-        v-for="row in rows" :key="row"
-        class=" col-2 form-control"
-        :value="row[1]"
-        disabled
-    />
-    <div class="row-1 col-1 container-header" >
-      <span
-          class="input-group-addon col-1">
-        <i class="glyphicon glyphicon-floppy-remove"></i>
-      </span>
-    </div>
-  </div>
-  <hr>
-  <div class="flex-container container-header">
 
-    <input disabled :value="getCount()"  class="col-2 form-control"/>
+  <div v-if="!rows.length">Загрузка</div>
 
-    <input
-        v-for="(row, index) in rows.slice(1)" :key="row[1]"
-        @keyup='updateData(index, row[1])'
-        @blur='updateData(index, row[1])'
-        @paste='updateData(index, row[1])'
-        @delete='updateData(index, row[1])'
-        class="col-2 form-control"
-        placeholder="Enter field value"
-        ref='data'
-    />
-    <div class="row-1 col-1 container-header" >
-      <span
-          @click="addColumn"
-          class="input-group-addon col-1">
-        <i class="glyphicon glyphicon-ok"></i>
-      </span>
-    </div>
-  </div>
-  <hr>
-  <div class="flex-container column-1">
-    <div class="container-header row-1 input-group field" v-for="(column, index) in columns" :key="column">
+  <div v-else>
+
+    <div class="flex-container container-header">
       <input
-          v-for="coll in column" :key="coll"
-          :value="coll"
-          class='title form-control col-2'
+          v-for="row in rows"
+          :key="row"
+          class="col-2 form-control"
+          :value="row[1]"
           disabled
       />
-
-      <div class="row-1 col-1 container-header" >
-        <span
-            @click="deleteColumn(column[0], index)"
-            class="input-group-addon col-2 actions"><i class="glyphicon glyphicon-remove"></i>
+      <div class="row-1 col-1 container-header">
+        <span class="input-group-addon col-1">
+          <i class="glyphicon glyphicon-floppy-remove"></i>
         </span>
       </div>
     </div>
+    <hr>
+    <div class="flex-container container-header">
+
+      <input
+          disabled
+          :value="getCount()"
+          class="col-2 form-control"
+      />
+
+      <input
+          v-for="(row, index) in rows.slice(1)"
+          :key="row[1]"
+          @input="updateData(index, row[1])"
+          class="col-2 form-control"
+          placeholder="Enter new field value"
+          ref="data"
+      />
+      <div class="row-1 col-1 container-header">
+        <span
+            @click="addColumn"
+            class="input-group-addon col-1"
+        >
+          <i class="glyphicon glyphicon-ok"></i>
+        </span>
+      </div>
+    </div>
+    <hr>
+    <div class="flex-container column-1">
+      <div
+          class="container-header row-1 input-group field"
+          v-for="(column, index) in columns"
+          :key="column[0]"
+      >
+        <input
+            v-for="coll in column"
+            :key="coll"
+            :value="coll"
+            class="title form-control col-2"
+            disabled
+        />
+
+        <div class="row-1 col-1 container-header">
+          <span
+              @click="deleteColumn(column[0], index)"
+              class="input-group-addon col-2 actions"
+          >
+            <i class="glyphicon glyphicon-remove"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div v-if="columns.length !== 0">
+      <hr>
+      <p style="text-transform: uppercase; font-weight: 500">Экспорт в .zip</p>
+
+      <select
+          class="form-select form-control"
+          id="sel1"
+          name="cellist1"
+          v-model="selected"
+      >
+        <option disabled value="">Выберите документ</option>
+        <option
+            v-for="template in templates"
+            :key="template.id"
+            :value="template.id"
+        >
+          {{ template.info.name }}
+        </option>
+      </select>
+      <br>
+      <span
+          @click="downloadAllZip"
+          class="input-group-addon"
+      >
+        <i class="glyphicon glyphicon-circle-arrow-down"></i>
+      </span>
+    </div>
+
+    <div v-else class="form">В этой таблице нет ничего</div>
   </div>
-  <span
-      style="width: inherit"
-      @click="downloadAllZip"
-      class="input-group-addon"><i class="glyphicon glyphicon-circle-arrow-down"></i>
-  </span>
 </template>
+
 
 <script>
 

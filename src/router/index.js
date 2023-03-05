@@ -32,7 +32,7 @@ const routes = [
     name: 'table',
     component: TablePageView
   },
-  { path: "*", component: HomeView }
+  { path: '/:pathMatch(.*)*', component: HomeView },
 ]
 
 const router = createRouter({

@@ -1,50 +1,42 @@
 <template>
+  <div class="form" v-if="error">{{ error }}</div>
+  <div class="form" v-else-if="!tables">Загрузка</div>
+  <div v-else>
+    <div class="flex-container">
+      <form v-on:submit="createTable">
+        <div class="container-header">
+          <input required :value="$route.params.id" disabled class="form-control col-1">
+          <input required v-model="table_name" placeholder="Enter table name" class="form-control col-3">
+          <input type="submit" value="Создать таблицу" class="btn btn-primary col-2">
+          <input @click="addNewItem" value="Добавить поле" class="btn btn-success col-1">
+        </div>
 
-  <div class="flex-container">
-    <form v-on:submit="createTable">
-      <div class="container-header">
-        <input required :value="this.$route.params.id" disabled class="form-control col-1">
-        <input required v-model="table_name" placeholder="Enter table name" class="form-control col-3">
-        <input type="submit" value="Создать таблицу" class="btn btn-primary col-2">
-        <input @click='addNewItem' value="Добавить поле" class="btn btn-success col-1">
-      </div>
-
-      <div class="container-body" >
-        <div class='col-3' v-for='(item, index) in items' :key='index' >
-          <div class="input-group" >
-            <input
-                required
-                ref="tables"
-                class='title form-control'
-                :placeholder='item.placeholder'
-                @keyup='updateItem(index)'
-                @blur='updateItem(index)'
-                @paste='updateItem(index)'
-                @delete='updateItem(index)'>
-            <span class="input-group-addon" @click='deleteItem(item)'><i class="glyphicon glyphicon-remove"></i></span>
+        <div class="container-body">
+          <div class="col-3" v-for="(item, index) in items" :key="index">
+            <div class="input-group">
+              <input
+                  required
+                  ref="tables"
+                  class="title form-control"
+                  :placeholder="item.placeholder"
+                  @keyup="updateItem(index)"
+                  @blur="updateItem(index)"
+                  @paste="updateItem(index)"
+                  @delete="updateItem(index)"
+              >
+              <span class="input-group-addon" @click="deleteItem(item)"><i class="glyphicon glyphicon-remove"></i></span>
+            </div>
           </div>
         </div>
-      </div>
-    </form>
-  </div>
-
-  <br>
-  <div v-if="tables">
-    <div class="form" v-if="!tables.length">
-      В этой бд отсуствуют таблицы
-      <p
-          @click="() => {this.$route.params.id}"
-          style="color: #4cbc89; cursor: pointer; display: contents"
-      >
-        Создать?
-      </p>
+      </form>
     </div>
-    <div v-else style="display: flex">
+
+    <div style="display: flex">
       <div class="card" v-for="table in tables" :key="table">
         <button @click="deleteDocument(table)" class="btn-delete">
           <span class="glyphicon glyphicon-floppy-remove" style="font-size: 18px"></span>
         </button>
-        <RouterLink :to="{ name: `table`, params: { database: this.$route.params.id, table: table }}">
+        <RouterLink :to="{ name: 'table', params: { database: $route.params.id, table: table }}">
           <div><img src="@/assets/table.png" class="avatar" alt="#"/></div>
           <div class="test">
             <h4 class="card__name">{{ table }}</h4>
@@ -52,9 +44,11 @@
         </RouterLink>
       </div>
     </div>
+
+    <div class="form" v-if="error === false && tables.length === 0">В этой бд отсутствуют таблицы</div>
   </div>
-  <div v-else class="form">Такого файла не существует</div>
 </template>
+
 
 <script>
 import { useToast } from "vue-toastification";
@@ -64,7 +58,8 @@ export default {
     return {
       tables: [],
       items: [],
-      table_name: ''
+      table_name: '',
+      error: false,
     };
   },
   setup() {
@@ -129,7 +124,11 @@ export default {
       );
       if (request.ok) {
         const response = await request.json();
-        if (response.status) this.tables = response.data;
+        if (response.status) {
+          this.tables = response.data
+        } else {
+          this.error = response.status === false ? response.msg: false
+        }
       }
     }
   },
@@ -177,6 +176,5 @@ export default {
   flex-direction: row;
   margin-top: 10px;
 }
-
 
 </style>

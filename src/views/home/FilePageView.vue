@@ -12,6 +12,7 @@
     </div>
     <div v-else>
       <div class="form">
+
         <label
           :for="pattern.name"
           v-for="(pattern, index) in file.patterns"
@@ -22,18 +23,21 @@
               :id="pattern.name"
               type="text"
               :placeholder="pattern.desc"
-              list="rows"
+              list="columns"
               required
-              :disabled="!rows.length"
+              :disabled="!columns.length"
               @change="checkOption(index)"
           />
-          <datalist id="rows">
-            <option v-for="row in rows_copy" :key="row">
-              {{row}}
+          <datalist id="columns">
+            <option v-for="column in columns_copy" :key="column">
+              {{column}}
             </option>
           </datalist>
           <span :style="`--index: ${index}`">{{ pattern.desc }}</span>
         </label>
+
+        <div><b>Подсказка</b>: кликните два раза, чтобы вызывать список ячеек таблицы </div>
+
       </div>
 
       <div
@@ -65,11 +69,6 @@
             style="height: inherit;"
             v-model="selected_table"
 
-            @keydown="getColumns"
-            @keyup='getColumns'
-            @blur='getColumns'
-            @paste='getColumns'
-            @delete='getColumns'
             @change="getColumns"
         >
           <option selected disabled value="">Выберите таблицу</option>
@@ -105,9 +104,11 @@ export default {
       tables: [],
       selected_db: '',
       selected_table: '',
-      rows: [],
-      rows_copy: [],
+      columns: [],
+      columns_copy: [],
       selected: [],
+      rows: [],
+      count: 0,
     };
   },
   setup() {
@@ -119,7 +120,7 @@ export default {
   methods: {
     checkOption(index) {
       const input = this.$refs.data[index];
-      const optionExists = this.rows.includes(input.value)
+      const optionExists = this.columns.includes(input.value)
       if (optionExists === false) {
         this.$refs.data.forEach((data) => {data.value = ''})
         this.selected = []
@@ -128,7 +129,7 @@ export default {
       } else {
         this.selected.push(input.value)
       }
-      this.rows_copy = this.rows.filter(item => !this.selected.includes(item))
+      this.columns_copy = this.columns.filter(item => !this.selected.includes(item))
     },
     parseDataFromInput() {
       const jsonData = {};
@@ -138,15 +139,27 @@ export default {
       }
       return jsonData;
     },
+    async getRows () {
+      const query = `db_name=${this.selected_db}&table_name=${this.selected_table}`
+      const request = await fetch(`/api/get_rows_from_table?${query}`);
+      if (request.ok) {
+        const response = await request.json();
+        if (response.status) {
+          this.rows = response.data
+          this.count = response?.data.length || 0
+        }
+      }
+    },
     async getColumns () {
       const query = `db_name=${this.selected_db}&table_name=${this.selected_table}`
       const request = await fetch(`/api/get_info_columns_of_table?${query}`);
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
-          this.rows = response.data.slice(1).map((response) => response[1])
-          this.rows_copy = response.data.slice(1).map((response) => response[1])
+          this.columns = response.data.slice(1).map((response) => response[1])
+          this.columns_copy = response.data.slice(1).map((response) => response[1])
           this.$refs.data.forEach((data) => {data.value = ''})
+          await this.getRows()
         }
       }
     },
@@ -189,33 +202,11 @@ export default {
       );
       if (request.ok) {
         const response = await request.json();
-        if (response.status) this.tables = response.data;
+        if (response.status) {
+          this.tables = response.data
+        }
       }
     },
-    // async downloadAllZipTest() {
-    //   const id = this.$route.params.id || null;
-    //   const database = this.selected_db || null;
-    //   const table = this.selected_table || null;
-    //   const dataFromInput = this.parseDataFromInput() || null // this requred query param need validation
-    //
-    //   if (dataFromInput)
-    //   if (!id) {
-    //     this.toast.error('Missing or invalid template id');
-    //     return;
-    //   }
-    //
-    //   if (!database) {
-    //     this.toast.error('Missing database name');
-    //     return;
-    //   }
-    //
-    //   if (!table) {
-    //     this.toast.error('Missing table name');
-    //     return;
-    //   }
-    //   const queryParams = new URLSearchParams({...dataFromInput, id, database, table });
-    //   window.location.href = `/api/multi_fill_template?${queryParams.toString()}`
-    // },
     async downloadAllZip() {
       const id = this.$route.params.id || null;
       const database = this.selected_db || null;
@@ -241,7 +232,10 @@ export default {
         this.toast.error('Missing table name');
         return;
       }
-
+      if (this.count === 0) {
+        this.toast.error('This selected table, not columns, please fill field');
+        return;
+      }
       const queryParams = new URLSearchParams({...dataFromInput, id, database, table });
       window.location.href = `/api/multi_fill_template?${queryParams.toString()}`;
     },
@@ -302,13 +296,12 @@ span {
   position: absolute;
   top: 0;
   left: 0;
-  transform: translateY(30px);
   font-size: 0.825em;
   transition-duration: 300ms;
 }
 
 label:focus-within > span,
-input:not(:placeholder-shown) + span {
+input + span {
   color: green;
   transform: translateY(0px);
 }

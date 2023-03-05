@@ -10,7 +10,7 @@
   </div>
   <br>
   <div v-if="databases" >
-    <div class="form" v-if="!databases.length">
+    <div class="form" v-if="databases.length === 0">
       У вас нет бд
     </div>
     <div v-else style="display: flex">
@@ -57,7 +57,7 @@ export default {
       if (request.ok) {
         const response = await request.json();
         if (response.status) {
-          this.databases.push(this.db_name)
+          this.databases.push(this.db_name + ".db")
           this.toast.info(`бд создана ${this.db_name}`);
 
           this.db_name = ""
