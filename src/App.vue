@@ -67,6 +67,7 @@ nav a.router-link-exact-active {
   border-radius: 5px;
   margin-right: 30px;
   margin-bottom: 30px;
+  text-align: center;
 }
 .card:last-child {
   margin-right: 0;

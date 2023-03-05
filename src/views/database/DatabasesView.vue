@@ -19,7 +19,7 @@
           <span class="glyphicon glyphicon-floppy-remove" style="font-size: 18px"></span>
         </button>
         <RouterLink :to="{ name: 'database', params: { id: database } }">
-          <div><img src="@/assets/docx.png" class="avatar" alt="#"/></div>
+          <div><img src="@/assets/database.png" class="avatar" alt="#"/></div>
           <div class="test">
             <h4 class="card__name">{{ database }}</h4>
           </div>

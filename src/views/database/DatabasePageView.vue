@@ -45,7 +45,7 @@
           <span class="glyphicon glyphicon-floppy-remove" style="font-size: 18px"></span>
         </button>
         <RouterLink :to="{ name: `table`, params: { database: this.$route.params.id, table: table }}">
-          <div><img src="@/assets/docx.png" class="avatar" alt="#"/></div>
+          <div><img src="@/assets/table.png" class="avatar" alt="#"/></div>
           <div class="test">
             <h4 class="card__name">{{ table }}</h4>
           </div>
