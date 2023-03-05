@@ -32,6 +32,7 @@ const routes = [
     name: 'table',
     component: TablePageView
   },
+  { path: "*", component: HomeView }
 ]
 
 const router = createRouter({
